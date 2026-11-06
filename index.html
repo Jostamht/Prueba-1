@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invitación</title>
+<meta name="description" content="Invitación de boda">
+
+<!-- Vista previa al compartir por WhatsApp/redes (esas apps no ejecutan JavaScript).
+     Cambia estos textos por los de cada boda. Para og:image usa una URL completa (https://...). -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Invitación de boda">
+<meta property="og:description" content="Acompáñanos a celebrar nuestra boda">
+<!-- <meta property="og:image" content="https://TU-DOMINIO/img/portada.jpg"> -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/styles.css">
+
+<!-- Three.js por import map (solo se usa si el hero está activo) -->
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<noscript><p style="padding:2rem;text-align:center;font-family:sans-serif">Activa JavaScript para ver la invitación.</p></noscript>
+
+<!-- HERO OPCIONAL: se inyecta desde config.js -->
+<div id="hero" hidden></div>
+
+<header id="site-nav" hidden></header>
+
+<main id="main"></main>
+
+<footer id="site-footer" hidden></footer>
+
+<script src="js/config.js" defer></script>
+<script src="js/app.js" defer></script>
+<script src="js/popup-book.js" defer></script>
+</body>
+</html>
