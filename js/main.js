@@ -42,7 +42,12 @@ async function main() {
   mute.addEventListener('click', () => { muted = !muted; mute.setAttribute('aria-pressed', String(muted)); mute.setAttribute('aria-label', muted ? 'Activar música' : 'Silenciar música'); syncAudio(); });
   document.addEventListener('visibilitychange', syncAudio);
 
+  let portrait = false, isOpen = false;
+  const readBtn = $('readBtn');
+  const syncRead = () => { readBtn.hidden = !(portrait && isOpen); };
+  readBtn.addEventListener('click', () => { const on = readBtn.getAttribute('aria-pressed') !== 'true'; readBtn.setAttribute('aria-pressed', String(on)); readBtn.textContent = on ? 'Ver libro' : 'Leer'; book.setRead(on); });
   const book = new Book($('stage'), data, {
+    onAspect: (a) => { portrait = a < 1; syncRead(); if (!portrait && readBtn.getAttribute('aria-pressed') === 'true') readBtn.click(); },
     onAction: handleAction,
     onOpenRequest: () => open(),
     onTurn: (i) => {
@@ -66,6 +71,7 @@ async function main() {
     started = true; audio.play().catch(() => {});
     mute.hidden = false;
     await book.open();
+    isOpen = true; syncRead();
     $('hud').hidden = false; hint.hidden = false;
     setTimeout(() => hint.classList.add('off'), 6000);
   }

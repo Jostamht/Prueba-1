@@ -26,8 +26,8 @@
       "titulo": "Bienvenida",
       "art": "img/1A.webp",
       "items": [
-        { "src": "img/1B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/1C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/1B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/1C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "Nos casamos" },
@@ -43,8 +43,8 @@
       "titulo": "Nuestra historia",
       "art": "img/2A.webp",
       "items": [
-        { "src": "img/2B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/2C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/2B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/2C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "Nuestra historia" },
@@ -59,8 +59,8 @@
       "titulo": "Ceremonia",
       "art": "img/3A.webp",
       "items": [
-        { "src": "img/3B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/3C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/3B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/3C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "La ceremonia" },
@@ -76,8 +76,8 @@
       "titulo": "Recepción",
       "art": "img/4A.webp",
       "items": [
-        { "src": "img/4B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/4C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/4B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/4C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "La recepción" },
@@ -93,8 +93,8 @@
       "titulo": "Programa",
       "art": "img/5A.webp",
       "items": [
-        { "src": "img/5B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/5C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/5B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/5C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "Programa de la recepción" },
@@ -114,8 +114,8 @@
       "titulo": "Detalles",
       "art": "img/6A.webp",
       "items": [
-        { "src": "img/6B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/6C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/6B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/6C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "Detalles" },
@@ -131,8 +131,8 @@
       "titulo": "Regalos",
       "art": "img/7A.webp",
       "items": [
-        { "src": "img/7B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/7C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/7B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/7C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "Regalos" },
@@ -146,8 +146,8 @@
       "titulo": "Confirma tu asistencia",
       "art": "img/8A.webp",
       "items": [
-        { "src": "img/8B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
-        { "src": "img/8C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+        { "src": "img/8B.webp", "anchor": [0, -0.2], "maxWidth": 1.62, "maxHeight": 0.9, "layer": "background" },
+        { "src": "img/8C.webp", "anchor": [0.5, 0.12], "maxWidth": 0.5, "maxHeight": 0.66, "layer": "foreground" }
       ],
       "card": { "blocks": [
         { "type": "eyebrow", "text": "Confirma tu asistencia" },

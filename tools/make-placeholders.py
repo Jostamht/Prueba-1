@@ -1,5 +1,5 @@
 """Genera las imágenes provisionales (1A, 1B, 1C ... 8A, 8B, 8C) y el QR de ejemplo.
-A = fondo de la página (1280x960) · B = figura media (recorte) · C = figura frontal (recorte).
+A = lámina de las dos páginas (1776x1000) · B = respaldo de pie al fondo (recorte) · C = figura de pie (recorte).
 Uso: python3 tools/make-placeholders.py   (requiere Pillow)"""
 import random, os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -35,12 +35,16 @@ def label(img, text, sub, big):
     d.text((W/2, H/2 + big*0.55), sub, font=sf, fill=(90,75,60,230), anchor='mm')
 
 def make_A(i):
-    img = wash((1280, 960), TINTS[i])
+    img = wash((1776, 1000), TINTS[i], 22)
     d = ImageDraw.Draw(img)
-    d.rectangle((30,30,1250,930), outline=GOLD+(255,), width=6)
-    d.rectangle((48,48,1232,912), outline=GOLD+(160,), width=2)
-    label(img, f"{i+1}A", f"Fondo · {TITLES[i]} · 1280×960", 300)
-    img.convert('RGB').save(f"{OUT}/{i+1}A.webp", quality=80)
+    d.rectangle((30,30,1746,970), outline=GOLD+(255,), width=6)
+    d.rectangle((48,48,1728,952), outline=GOLD+(160,), width=2)
+    d.line((888,30,888,970), fill=(120,95,60,150), width=3)
+    label(img, f"{i+1}A", f"Lámina de las dos páginas · {TITLES[i]} · 1776×1000", 300)
+    sf = ImageFont.truetype(REG, 34)
+    d.text((444, 900), "página izquierda", font=sf, fill=(90,75,60,200), anchor='mm')
+    d.text((1332, 900), "página derecha", font=sf, fill=(90,75,60,200), anchor='mm')
+    img.convert('RGB').save(f"{OUT}/{i+1}A.webp", quality=82)
 
 def cutout(size, shape, tint, tag, sub, big):
     W, H = size
@@ -50,24 +54,24 @@ def cutout(size, shape, tint, tag, sub, big):
     if shape == 'arch':
         md.rectangle((m, W//2, W-m, H-m), fill=255)
         md.ellipse((m, m, W-m, W-m), fill=255)
+    elif shape == 'wall':
+        md.rounded_rectangle((m, m, W-m, H-m), radius=60, fill=255)
+        for k in range(9):
+            x = m + (W-2*m) * k / 8
+            md.ellipse((x-60, m-18, x+60, m+42), fill=255)
     else:
         md.ellipse((m, m, W-m, H-m), fill=255)
     outline = mask.filter(ImageFilter.MaxFilter(21))
     img = Image.new('RGBA', size, (0,0,0,0))
     img.paste((253,250,242,255), (0,0), outline)
-    art = wash(size, tint, 10)
-    img.paste(art, (0,0), mask)
-    d = ImageDraw.Draw(img)
-    d.line((m+20, H-m-6, W-m-20, H-m-6), fill=GOLD+(255,), width=5) if shape == 'arch' else None
+    img.paste(wash(size, tint, 10), (0,0), mask)
     label(img, tag, sub, big)
     return img
 
 for i in range(8):
     make_A(i)
-    b = cutout((640, 900), 'arch', TINTS[i], f"{i+1}B", f"Figura media · 640×900", 190)
-    b.save(f"{OUT}/{i+1}B.webp", quality=82)
-    c = cutout((560, 560), 'oval', TINTS[(i+3) % 8], f"{i+1}C", f"Frontal · 560×560", 170)
-    c.save(f"{OUT}/{i+1}C.webp", quality=82)
+    cutout((1500, 820), 'wall', TINTS[(i+2) % 8], f"{i+1}B", "Respaldo de pie · 1500×820", 260).save(f"{OUT}/{i+1}B.webp", quality=82)
+    cutout((560, 820), 'arch', TINTS[(i+4) % 8], f"{i+1}C", "Figura · 560×820", 170).save(f"{OUT}/{i+1}C.webp", quality=82)
 
 # QR de ejemplo (reemplazar por el real: img/qr.png)
 qr = Image.new('RGBA', (600, 600), (255,255,255,255))

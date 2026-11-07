@@ -76,3 +76,6 @@ body.is-simple #stage, body.is-simple #gate, body.is-simple #hud, body.is-simple
 .s-card .btn { display: inline-block; margin: 8px 4px; text-decoration: none; font-size: 1rem; }
 .btn--ghost { background: transparent; color: #8a6a22; border-color: #8a6a22; }
 .s-qr { background: #fff; border: 3px solid var(--gold); padding: 8px; margin: 8px auto; display: block; }
+
+.read-btn { position: fixed; top: max(14px, env(safe-area-inset-top)); left: 14px; height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--gold); background: rgba(10,8,7,.7); color: var(--gold-l); font: 600 1rem var(--serif); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; z-index: 3; }
+.read-btn[aria-pressed="true"] { background: var(--gold); color: var(--ink); }
