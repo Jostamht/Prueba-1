@@ -275,11 +275,11 @@ export class Book {
     this.gutterMat = new THREE.MeshBasicMaterial({ map: gutterTexture(), transparent: true, depthWrite: false });
     const gut = new THREE.Mesh(new THREE.PlaneGeometry(0.24, PAGE_H), this.gutterMat); gut.rotation.x = -Math.PI / 2; gut.position.y = 0.0018; gut.renderOrder = 2; this.gutter = gut; gut.visible = false; this.root.add(gut);
 
-    this._buildLeaf();
+    this.leaves = [];
     this._buildCover();
   }
 
-  _buildLeaf() {
+  _makeLeaf() {
     const pos = new THREE.BufferAttribute(new Float32Array((SEG + 1) * 2 * 3), 3);
     const mk = (flip) => {
       const g = new THREE.BufferGeometry(); const uv = new Float32Array((SEG + 1) * 2 * 2), idx = [];
@@ -290,23 +290,46 @@ export class Book {
       }
       g.setAttribute('position', pos); g.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); g.setIndex(idx); return g;
     };
-    this.leafPos = pos;
-    this.leafFront = new THREE.Mesh(mk(false), std({ color: 0xffffff }));
-    this.leafBack = new THREE.Mesh(mk(true), std({ color: 0xffffff, side: THREE.BackSide }));
-    for (const m of [this.leafFront, this.leafBack]) { m.frustumCulled = false; m.renderOrder = 3; }
-    this.leaf = new THREE.Group(); this.leaf.position.y = LEAF_LIFT; this.leaf.add(this.leafFront, this.leafBack); this.leaf.visible = false;
-    this.root.add(this.leaf);
-    this._curl(0);
+    const front = new THREE.Mesh(mk(false), std({ color: 0xffffff }));
+    const back = new THREE.Mesh(mk(true), std({ color: 0xffffff, side: THREE.BackSide }));
+    for (const m of [front, back]) { m.frustumCulled = false; m.renderOrder = 3; }
+    const group = new THREE.Group(); group.position.y = LEAF_LIFT; group.add(front, back); group.visible = false;
+    this.root.add(group);
+    const leaf = { pos, front, back, group };
+    this._curl(leaf, 0);
+    return leaf;
+  }
+  /** Hoja que gira sobre el lomo. Se crean a demanda: un salto de varias páginas usa varias a la vez. */
+  _getLeaf(j) {
+    if (this.leaves[j]) return this.leaves[j];
+    const pos = new THREE.BufferAttribute(new Float32Array((SEG + 1) * 2 * 3), 3);
+    const mk = (flip) => {
+      const g = new THREE.BufferGeometry(); const uv = new Float32Array((SEG + 1) * 2 * 2), idx = [];
+      for (let k = 0; k <= SEG; k++) {
+        const u = k / SEG, ux = flip ? 0.5 * (1 - u) : 0.5 + 0.5 * u;
+        uv.set([ux, 1, ux, 0], k * 4);
+        if (k < SEG) { const a = 2 * k, b = a + 1, c = a + 2, d = a + 3; idx.push(a, b, c, c, b, d); }
+      }
+      g.setAttribute('position', pos); g.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); g.setIndex(idx); return g;
+    };
+    const front = new THREE.Mesh(mk(false), std({ color: 0xffffff }));
+    const back = new THREE.Mesh(mk(true), std({ color: 0xffffff, side: THREE.BackSide }));
+    for (const m of [front, back]) { m.frustumCulled = false; m.renderOrder = 3; }
+    const group = new THREE.Group(); group.position.y = LEAF_LIFT; group.add(front, back); group.visible = false;
+    this.root.add(group);
+    const leaf = { pos, front, back, group };
+    this._curl(leaf, 0);
+    return (this.leaves[j] = leaf);
   }
 
-  _curl(p) {
+  _curl(leaf, p) {
     const phi = Math.PI * p, kappa = CURL_MAX * Math.pow(Math.sin(Math.PI * clamp(p)), 2), o = [0, 0];
     for (let j = 0; j <= SEG; j++) {
       curlPoint((j / SEG) * PAGE_W, phi, kappa, o);
-      this.leafPos.setXYZ(2 * j, o[0], o[1], -PAGE_H / 2); this.leafPos.setXYZ(2 * j + 1, o[0], o[1], PAGE_H / 2);
+      leaf.pos.setXYZ(2 * j, o[0], o[1], -PAGE_H / 2); leaf.pos.setXYZ(2 * j + 1, o[0], o[1], PAGE_H / 2);
     }
-    this.leafPos.needsUpdate = true;
-    for (const m of [this.leafFront, this.leafBack]) m.geometry.computeVertexNormals();
+    leaf.pos.needsUpdate = true;
+    leaf.front.geometry.computeVertexNormals(); leaf.back.geometry.computeVertexNormals();
   }
 
   _buildCover() {
@@ -338,13 +361,13 @@ export class Book {
 
   _cams() {
     const V = (x, y, z) => new THREE.Vector3(x, y, z), W = PAGE_W, H = PAGE_H / 2;
-    const lim = { x: 0.95, top: 0.9, bottom: -0.76 };
+    const lim = { x: 0.95, top: 0.9, bottom: -0.68 };
     const open = [V(-W, -0.09, H + 0.02), V(W, -0.09, H + 0.02), V(-W, 0, -H), V(W, 0, -H), V(-0.85, 1.0, -0.22), V(0.85, 1.0, -0.22)];
     this.camOpen = this._solve(open, V(0, 0.2, 0.05), this.pitch, this.yaw, lim);
     const closed = [V(0, -0.09, H + 0.02), V(W, -0.09, H + 0.02), V(0, 0.02, -H), V(W, 0.02, -H)];
-    this.camClosed = this._solve(closed, V(W / 2, 0, 0), 1.05, -0.12, { x: 0.9, top: 0.9, bottom: -0.76 });
+    this.camClosed = this._solve(closed, V(W / 2, 0, 0), 1.05, -0.12, { x: 0.9, top: 0.9, bottom: -0.68 });
     const read = [V(-W, -0.09, H + 0.02), V(0, -0.09, H + 0.02), V(-W, 0, -H), V(0, 0, -H), V(-W / 2, 0.38, -0.2)];
-    this.camRead = this._solve(read, V(-W / 2, 0.08, 0.1), 1.12, 0, { x: 0.94, top: 0.9, bottom: -0.76 });
+    this.camRead = this._solve(read, V(-W / 2, 0.08, 0.1), 1.12, 0, { x: 0.94, top: 0.9, bottom: -0.68 });
   }
 
   resize() {
@@ -481,25 +504,44 @@ export class Book {
 
   go(dir) { return this.goTo(this.cur + dir); }
 
-  /** Pasa a la vista n (puede ser lejana: una sola hoja que vuelve al principio). */
+  /** Pasa a la vista n. Si está lejos, varias hojas giran en cadena (una tras otra, superpuestas). */
   async goTo(n) {
     if (this.busy || this.stage !== 'open' || n === this.cur || n < 0 || n >= this.n) return;
-    const dir = n > this.cur ? 1 : -1;
+    const cur = this.cur, dir = n > cur ? 1 : -1, k = Math.abs(n - cur);
     this.busy = true; this._live(-1);
-    const to = await this.ensure(n), from = this.spreads[this.cur];
-    if (dir > 0) { this._setMap(this.leafFront, from.tex); this._setMap(this.leafBack, to.tex); this._setMap(this.rightSurface, to.tex); }
-    else { this._setMap(this.leafFront, to.tex); this._setMap(this.leafBack, from.tex); this._setMap(this.leftSurface, to.tex); }
-    this.leaf.visible = true;
-    await this.anim(TURN_MS, (t) => {
-      this._fold(from, 1 - easeInOut(clamp(t / 0.22)));              // la escena que sale se pliega rápido
-      const p = easeInOut(clamp((t - 0.03) / 0.83));                  // la hoja termina de caer hacia el 86 %
-      this._curl(dir > 0 ? p : 1 - p);
-      this._riseAt(to, t, 0.36, 0.62);                                // la nueva escena se levanta antes de que la hoja caiga del todo
+    const idx = []; for (let i = Math.min(cur, n); i <= Math.max(cur, n); i++) idx.push(i);
+    await Promise.all(idx.map((i) => this.ensure(i)));
+    const from = this.spreads[cur], to = this.spreads[n], leaves = [];
+    for (let j = 0; j < k; j++) {
+      const leaf = this._getLeaf(j);
+      if (dir > 0) { this._setMap(leaf.front, this.spreads[cur + j].tex); this._setMap(leaf.back, this.spreads[cur + j + 1].tex); }
+      else { this._setMap(leaf.front, this.spreads[cur - j - 1].tex); this._setMap(leaf.back, this.spreads[cur - j].tex); }
+      this._curl(leaf, dir > 0 ? 0 : 1); leaf.group.visible = true; leaves.push(leaf);
+    }
+    if (dir > 0) this._setMap(this.rightSurface, to.tex); else this._setMap(this.leftSurface, to.tex);
+    const D = k === 1 ? 1245 : 1000, ST = 170, T0 = 45, lastStart = T0 + (k - 1) * ST, T = lastStart + D * 1.17;
+    await this.anim(T, (t) => {
+      const ms = t * T;
+      this._fold(from, 1 - easeInOut(clamp(ms / 330)));                       // la escena que sale se pliega rápido
+      leaves.forEach((leaf, j) => {
+        const v = clamp((ms - T0 - j * ST) / D), e = easeInOut(v);
+        this._curl(leaf, dir > 0 ? e : 1 - e);
+        leaf.group.position.y = LEAF_LIFT + lerp(k - 1 - j, j, smooth(v)) * 0.0009;   // pila ordenada, sin parpadeos
+      });
+      this._riseAt(to, clamp(0.03 + 0.83 * ((ms - lastStart) / D)), 0.36, 0.62);   // sube antes de que caiga la última hoja
     });
     this._all(to).forEach((r) => r.set(1, true));
     if (dir > 0) this._setMap(this.leftSurface, to.tex); else this._setMap(this.rightSurface, to.tex);
-    this.leaf.visible = false; this.cur = n; this._live(n); this.busy = false;
+    leaves.forEach((l) => { l.group.visible = false; l.group.position.y = LEAF_LIFT; });
+    this.cur = n; this._live(n); this.busy = false;
     this.hooks.onTurn?.(n); this.kick();
+  }
+
+  /** Vuelve hasta la portada: pasa las hojas hacia atrás y cierra el libro. */
+  async toCover() {
+    if (this.stage !== 'open' || this.busy) return;
+    if (this.cur !== 0) await this.goTo(0);
+    await this.close();
   }
 
   // ---------------- entrada ----------------

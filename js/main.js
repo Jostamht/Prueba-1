@@ -32,7 +32,13 @@ async function main() {
   await loadFonts();
   const live = $('live'), counter = $('counter'), dots = $('dots'), hint = $('hint');
   const n = data.spreads.length;
-  dots.innerHTML = '<i></i>'.repeat(n);
+  dots.innerHTML = '';
+  data.spreads.forEach((sp, i) => {
+    const b = document.createElement('button'); b.className = 'dot'; b.title = sp.titulo;
+    b.setAttribute('aria-label', `Ir a la página ${i + 1}: ${sp.titulo}`);
+    b.addEventListener('click', () => book.goTo(i));
+    dots.appendChild(b);
+  });
 
   // música (solo suena tras tocar "Abrir invitación")
   const audio = new Audio(data.musica); audio.loop = true; audio.volume = 0.6; audio.preload = 'none';
@@ -54,13 +60,14 @@ async function main() {
     onClosed: () => { isOpen = false; opening = false; syncRead(); readBtn.setAttribute('aria-pressed', 'false'); readBtn.textContent = 'Leer'; $('hud').hidden = true; hint.hidden = true; $('gate').hidden = false; },
     onTurn: (i) => {
       counter.textContent = `${i + 1} / ${n}`;
-      [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
+      [...dots.children].forEach((d, k) => { d.classList.toggle('on', k === i); if (k === i) d.setAttribute('aria-current', 'page'); else d.removeAttribute('aria-current'); });
       const prev = $('prevBtn'), next = $('nextBtn');
       prev.classList.toggle('wide', i === 0); next.classList.toggle('wide', i === n - 1);
-      prev.textContent = i === 0 ? 'Portada' : '‹'; next.textContent = i === n - 1 ? 'Inicio ↺' : '›';
+      prev.textContent = i === 0 ? 'Portada' : '‹'; next.textContent = i === n - 1 ? 'Portada ↺' : '›';
       prev.setAttribute('aria-label', i === 0 ? 'Volver a la portada' : 'Página anterior');
-      next.setAttribute('aria-label', i === n - 1 ? 'Volver al inicio' : 'Página siguiente');
+      next.setAttribute('aria-label', i === n - 1 ? 'Volver a la portada' : 'Página siguiente');
       const s = data.spreads[i];
+      $('pageTitle').textContent = s.titulo;
       live.textContent = s.titulo + '. ' + s.card.blocks.filter((b) => b.text).map((b) => b.text).join(' ');
       if (i > 0) hint.classList.add('off');
     }
@@ -84,11 +91,13 @@ async function main() {
   $('openBtn').addEventListener('click', open);
   const closeBook = () => book.close();
   $('prevBtn').addEventListener('click', () => (book.cur === 0 ? closeBook() : book.go(-1)));
-  $('nextBtn').addEventListener('click', () => (book.cur === n - 1 ? book.goTo(0) : book.go(1)));
+  $('nextBtn').addEventListener('click', () => (book.cur === n - 1 ? book.toCover() : book.go(1)));
   document.addEventListener('keydown', (e) => {
     if (document.querySelector('.modal')) return;
     if (e.key === 'ArrowRight' || e.key === 'PageDown') book.go(1);
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') book.go(-1);
+    else if (e.key === 'Home') book.goTo(0);
+    else if (e.key === 'End') book.goTo(n - 1);
     else if ((e.key === 'Enter' || e.key === ' ') && book.stage === 'closed') open();
   });
 }

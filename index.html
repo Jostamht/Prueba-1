@@ -19,9 +19,12 @@
   </div>
 
   <nav id="hud" class="hud" aria-label="Páginas" hidden>
-    <button id="prevBtn" class="nav-btn" aria-label="Página anterior">‹</button>
-    <div class="hud__mid"><span id="counter" class="counter">1 / 8</span><div id="dots" class="dots" aria-hidden="true"></div></div>
-    <button id="nextBtn" class="nav-btn" aria-label="Página siguiente">›</button>
+    <div id="dots" class="dots" role="group" aria-label="Ir a una página"></div>
+    <div class="hud__row">
+      <button id="prevBtn" class="nav-btn" aria-label="Página anterior">‹</button>
+      <div class="hud__mid"><span id="counter" class="counter">1 / 8</span><span id="pageTitle" class="page-title"></span></div>
+      <button id="nextBtn" class="nav-btn" aria-label="Página siguiente">›</button>
+    </div>
   </nav>
   <p id="hint" class="hint" hidden>Desliza para pasar la página</p>
   <button id="readBtn" class="read-btn" aria-pressed="false" hidden>Leer</button>

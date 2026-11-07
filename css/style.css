@@ -80,3 +80,20 @@ body.is-simple #stage, body.is-simple #gate, body.is-simple #hud, body.is-simple
 .read-btn { position: fixed; top: max(14px, env(safe-area-inset-top)); left: 14px; height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--gold); background: rgba(10,8,7,.7); color: var(--gold-l); font: 600 1rem var(--serif); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; z-index: 3; }
 .read-btn[aria-pressed="true"] { background: var(--gold); color: var(--ink); }
 .nav-btn.wide { width: auto; min-width: 52px; padding: 0 20px 2px; border-radius: 999px; font: 600 1rem var(--serif); letter-spacing: .12em; text-transform: uppercase; }
+.dots { gap: 0; }
+.dot { width: 24px; height: 24px; border: 0; background: none; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: rgba(230,201,126,.3); transition: background .3s, transform .3s; }
+.dot.on::after { background: var(--gold-l); transform: scale(1.4); }
+
+/* Barra inferior en dos filas: puntos para saltar de página y botones */
+.hud { flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 0; }
+.hud__row { display: flex; width: 100%; align-items: center; justify-content: space-between; padding: 0 16px; pointer-events: none; }
+.hud__row > * { pointer-events: auto; }
+.hud__mid { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.page-title { font-style: italic; font-size: .95rem; color: rgba(247,241,227,.8); }
+.dots { display: flex; justify-content: center; pointer-events: auto; }
+.dot { position: relative; width: 34px; height: 34px; border: 0; background: none; cursor: pointer; padding: 0; }
+.dot::before { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; border-radius: 50%; background: rgba(230,201,126,.3); transform: translate(-50%, -50%); transition: background .3s, transform .3s; }
+.dot.on::before { background: var(--gold-l); transform: translate(-50%, -50%) scale(1.5); }
+.dot:hover::before { background: rgba(230,201,126,.7); }
+.hint { bottom: 116px; }
