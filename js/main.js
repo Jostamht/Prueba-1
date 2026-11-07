@@ -50,10 +50,16 @@ async function main() {
     onAspect: (a) => { portrait = a < 1; syncRead(); if (!portrait && readBtn.getAttribute('aria-pressed') === 'true') readBtn.click(); },
     onAction: handleAction,
     onOpenRequest: () => open(),
+    onCloseRequest: () => closeBook(),
+    onClosed: () => { isOpen = false; opening = false; syncRead(); readBtn.setAttribute('aria-pressed', 'false'); readBtn.textContent = 'Leer'; $('hud').hidden = true; hint.hidden = true; $('gate').hidden = false; },
     onTurn: (i) => {
       counter.textContent = `${i + 1} / ${n}`;
       [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
-      $('prevBtn').disabled = i === 0; $('nextBtn').disabled = i === n - 1;
+      const prev = $('prevBtn'), next = $('nextBtn');
+      prev.classList.toggle('wide', i === 0); next.classList.toggle('wide', i === n - 1);
+      prev.textContent = i === 0 ? 'Portada' : '‹'; next.textContent = i === n - 1 ? 'Inicio ↺' : '›';
+      prev.setAttribute('aria-label', i === 0 ? 'Volver a la portada' : 'Página anterior');
+      next.setAttribute('aria-label', i === n - 1 ? 'Volver al inicio' : 'Página siguiente');
       const s = data.spreads[i];
       live.textContent = s.titulo + '. ' + s.card.blocks.filter((b) => b.text).map((b) => b.text).join(' ');
       if (i > 0) hint.classList.add('off');
@@ -76,8 +82,9 @@ async function main() {
     setTimeout(() => hint.classList.add('off'), 6000);
   }
   $('openBtn').addEventListener('click', open);
-  $('prevBtn').addEventListener('click', () => book.go(-1));
-  $('nextBtn').addEventListener('click', () => book.go(1));
+  const closeBook = () => book.close();
+  $('prevBtn').addEventListener('click', () => (book.cur === 0 ? closeBook() : book.go(-1)));
+  $('nextBtn').addEventListener('click', () => (book.cur === n - 1 ? book.goTo(0) : book.go(1)));
   document.addEventListener('keydown', (e) => {
     if (document.querySelector('.modal')) return;
     if (e.key === 'ArrowRight' || e.key === 'PageDown') book.go(1);

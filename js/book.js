@@ -10,7 +10,7 @@ import { renderCard } from './cards.js';
 const PAGE_W = 0.888, PAGE_H = 1.0;
 const BLOCK_H = 0.062, BOARD_H = 0.022, COVER_T = 0.016, LEAF_LIFT = 0.006, CURL_MAX = 0.72;
 const CARD_ELEV = 0.34;          // inclinación de la tarjeta sobre la página (rad)
-const TURN_MS = 2500, OPEN_MS = 3400;
+const TURN_MS = 1500, OPEN_MS = 3400, CLOSE_MS = 2200, RISE_WIN = 0.26;
 const SEG = 56;
 
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -138,7 +138,7 @@ class Rig {
   constructor(book, o) {
     const { map, backMap, w, h, x, z, finalX, cut, support, shadowD, shadowW } = o;
     this.w = w; this.h = h; this.finalX = finalX; this.home = new THREE.Vector3(x, 0.003, z);
-    this.q = 0; this._shown = false;
+    this.q = 0; this._shown = false; this.idle = null;
     this.group = new THREE.Group(); this.group.position.copy(this.home);
     const geo = new THREE.PlaneGeometry(w, h); geo.translate(0, h / 2, 0);
     this.fm = std({ map, transparent: true, alphaTest: cut ? 0.42 : 0 });
@@ -215,7 +215,8 @@ export class Book {
     this.anims = new Set(); this.raf = 0; this.mixOpen = 0; this.mixRead = 0; this.spreads = []; this.ptr = null;
     this.pitch = 0.98; this.yaw = -0.2; this.read = false;
     this.date = new Date(data.meta.fecha);
-    this.dur = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0.45 : 1;
+    this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.dur = this.reduced ? 0.45 : 1; this._last = 0;
   }
 
   async init() {
@@ -382,6 +383,7 @@ export class Book {
       const w = bw * sc, h = bh * sc, x = it.anchor[0], z = it.anchor[1];
       const rig = new Rig(this, { map, backMap: back, w, h, x, z, finalX: -0.06, cut: true, support: { maxBack: Math.max(0.08, z + PAGE_H / 2 - 0.03) }, shadowW: w * 1.25, shadowD: Math.max(0.1, Math.min(0.4, w * 0.45)) });
       rig.layer = it.layer || 'mid';
+      rig.idle = rig.layer === 'foreground' ? { amp: 0.07, period: 3.4, phase: s.i * 0.9 + k } : null;   // balanceo suave de las figuras C
       rig.late = Math.abs(x) < PAGE_W * 0.2 && w > 0.9 || x < 0;   // lo que cae bajo la hoja que gira, sube al final
       s.items.push(rig);
     });
@@ -403,18 +405,30 @@ export class Book {
   _riseAt(s, t, base, baseLate) {
     for (const r of this._all(s)) {
       const start = (r.late ? baseLate : base) + (LAYER_DELAY[r.layer] || 0);
-      r.set(clamp((t - start) / 0.2), true);
+      r.set(clamp((t - start) / RISE_WIN), true);
     }
   }
 
   // ---------------- animación ----------------
   anim(ms, fn) { return new Promise((res) => { this.anims.add({ t0: performance.now(), ms: ms * this.dur, fn, res }); this.kick(); }); }
   kick() { if (!this.raf && this.renderer) this.raf = requestAnimationFrame(this._tick); }
+  _idleOn() { return this.stage === 'open' && !this.reduced; }
+  _idleUpdate(t) {
+    for (const sp of this.spreads) for (const r of sp.items) {
+      if (!r.idle || !r.group.visible) continue;
+      const f = smooth(clamp((r.q - 0.9) / 0.1));
+      r.rig.rotation.z = f * r.idle.amp * Math.sin((2 * Math.PI * t) / r.idle.period + r.idle.phase);
+    }
+  }
   _tick = (now) => {
     this.raf = 0;
+    const animating = this.anims.size > 0, idle = this._idleOn();
+    if (!animating && idle && now - this._last < 30) { this.kick(); return; }   // en reposo, ~30 cuadros por segundo
+    this._last = now;
     for (const a of [...this.anims]) { const t = clamp((now - a.t0) / a.ms); a.fn(t); if (t >= 1) { this.anims.delete(a); a.res(); } }
+    if (this._idleOn()) this._idleUpdate(now / 1000);
     this._applyCam(); this.renderer.render(this.scene, this.camera);
-    if (this.anims.size) this.kick();
+    if (this.anims.size || this._idleOn()) this.kick();
   };
 
   async open() {
@@ -429,8 +443,9 @@ export class Book {
       this.leftStack.visible = e > 0.5;
       this.mixOpen = smooth(clamp((t - 0.25) / 0.6));
       this.deskMat.opacity = 1 - clamp((t - 0.35) / 0.45);
-      this._riseAt(s, t, 0.7, 0.78);
+      this._riseAt(s, t, 0.56, 0.62);
     });
+    this._all(s).forEach((r) => r.set(1, true));
     this.desk.visible = false;
     this.leftSurface.visible = true; this._applyPages(0); this.cover.visible = false;
     this.stage = 'open'; this.cur = 0; this._live(0); this.hooks.onTurn?.(0);
@@ -442,20 +457,45 @@ export class Book {
     if (s?.cardData?.live) s.timer = setInterval(() => { s.cardData.redraw(); s.card.cardTex.needsUpdate = true; this.kick(); }, 1000);
   }
 
-  async go(dir) {
-    if (this.busy || this.stage !== 'open') return;
-    const n = this.cur + dir; if (n < 0 || n >= this.n) return;
+  /** Cierra el libro (solo desde la primera vista): la tapa vuelve a cubrir las páginas y reaparece el escritorio. */
+  async close() {
+    if (this.stage !== 'open' || this.busy || this.cur !== 0) return;
+    this.busy = true; this.stage = 'closing'; this._live(-1);
+    const s = this.spreads[0], m0 = this.mixRead;
+    this.desk.visible = true; this.cover.visible = true; this.deskMat.opacity = 0;
+    this._setMap(this.coverIn, s.tex);
+    await this.anim(CLOSE_MS, (t) => {
+      this._fold(s, 1 - easeInOut(clamp(t / 0.25)));
+      const e = easeInOut(clamp((t - 0.2) / 0.5));
+      this.cover.rotation.z = Math.PI * (1 - e);
+      this.leftStack.visible = this.leftSurface.visible = e < 0.5;
+      this.mixOpen = 1 - smooth(clamp((t - 0.3) / 0.6));
+      this.mixRead = lerp(m0, 0, smooth(clamp(t / 0.4)));
+      this.deskMat.opacity = clamp((t - 0.35) / 0.45);
+    });
+    this.gutter.visible = false; this.read = false; this.mixRead = 0;
+    this.stage = 'closed'; this.busy = false; this.kick();
+    this.hooks.onClosed?.();
+  }
+
+  go(dir) { return this.goTo(this.cur + dir); }
+
+  /** Pasa a la vista n (puede ser lejana: una sola hoja que vuelve al principio). */
+  async goTo(n) {
+    if (this.busy || this.stage !== 'open' || n === this.cur || n < 0 || n >= this.n) return;
+    const dir = n > this.cur ? 1 : -1;
     this.busy = true; this._live(-1);
     const to = await this.ensure(n), from = this.spreads[this.cur];
     if (dir > 0) { this._setMap(this.leafFront, from.tex); this._setMap(this.leafBack, to.tex); this._setMap(this.rightSurface, to.tex); }
     else { this._setMap(this.leafFront, to.tex); this._setMap(this.leafBack, from.tex); this._setMap(this.leftSurface, to.tex); }
     this.leaf.visible = true;
     await this.anim(TURN_MS, (t) => {
-      this._fold(from, 1 - easeInOut(clamp((t - 0.02) / 0.28)));
-      const p = easeInOut(clamp((t - 0.06) / 0.9));
+      this._fold(from, 1 - easeInOut(clamp(t / 0.22)));              // la escena que sale se pliega rápido
+      const p = easeInOut(clamp((t - 0.03) / 0.83));                  // la hoja termina de caer hacia el 86 %
       this._curl(dir > 0 ? p : 1 - p);
-      this._riseAt(to, t, 0.5, 0.78);
+      this._riseAt(to, t, 0.36, 0.62);                                // la nueva escena se levanta antes de que la hoja caiga del todo
     });
+    this._all(to).forEach((r) => r.set(1, true));
     if (dir > 0) this._setMap(this.leftSurface, to.tex); else this._setMap(this.rightSurface, to.tex);
     this.leaf.visible = false; this.cur = n; this._live(n); this.busy = false;
     this.hooks.onTurn?.(n); this.kick();
@@ -475,7 +515,7 @@ export class Book {
       const p = this.ptr; if (!p || p.id !== e.pointerId) return; this.ptr = null;
       if (p.orbit) return;
       const dx = e.clientX - p.x, dy = e.clientY - p.y;
-      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.15) { if (this.stage === 'open') this.go(dx < 0 ? 1 : -1); else this.hooks.onOpenRequest?.(); }
+      if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.15) { if (this.stage === 'open') { if (dx > 0 && this.cur === 0) this.hooks.onCloseRequest?.(); else this.go(dx < 0 ? 1 : -1); } else if (this.stage === 'closed') this.hooks.onOpenRequest?.(); }
       else if (Math.hypot(dx, dy) < 10) this._tap(e);
     });
     c.addEventListener('pointercancel', () => (this.ptr = null));

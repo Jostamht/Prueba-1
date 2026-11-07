@@ -27,7 +27,7 @@ Para la vista 2 son `2A`, `2B`, `2C`, y así hasta la 8. Para reemplazarlas bast
 Las imágenes actuales son provisionales y se generan con `tools/make-placeholders.py`.
 
 ## Controles
-Deslizar a los lados, flechas o teclado para pasar la página; arrastrar hacia arriba o abajo para inclinar la vista. En pantallas verticales, el botón "Leer" acerca la tarjeta con el texto.
+Deslizar a los lados, flechas o teclado para pasar la página; arrastrar hacia arriba o abajo para inclinar la vista. En la primera vista, "Portada" (o deslizar hacia atrás) cierra el libro; en la última, "Inicio" vuelve a la primera. Las figuras C se balancean suavemente en reposo (se desactiva con la preferencia de reducir movimiento). En pantallas verticales, el botón "Leer" acerca la tarjeta con el texto.
 
 ## Música
 `audio/fairytale.mp3`. Empieza al tocar "Abrir invitación" y se puede silenciar con el botón de arriba a la derecha.

@@ -79,3 +79,4 @@ body.is-simple #stage, body.is-simple #gate, body.is-simple #hud, body.is-simple
 
 .read-btn { position: fixed; top: max(14px, env(safe-area-inset-top)); left: 14px; height: 44px; padding: 0 18px; border-radius: 999px; border: 1.5px solid var(--gold); background: rgba(10,8,7,.7); color: var(--gold-l); font: 600 1rem var(--serif); letter-spacing: .12em; text-transform: uppercase; cursor: pointer; z-index: 3; }
 .read-btn[aria-pressed="true"] { background: var(--gold); color: var(--ink); }
+.nav-btn.wide { width: auto; min-width: 52px; padding: 0 20px 2px; border-radius: 999px; font: 600 1rem var(--serif); letter-spacing: .12em; text-transform: uppercase; }
