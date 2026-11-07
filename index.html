@@ -1,46 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Invitación</title>
-<meta name="description" content="Invitación de boda">
-
-<!-- Vista previa al compartir por WhatsApp/redes (esas apps no ejecutan JavaScript).
-     Cambia estos textos por los de cada boda. Para og:image usa una URL completa (https://...). -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="Invitación de boda">
-<meta property="og:description" content="Acompáñanos a celebrar nuestra boda">
-<!-- <meta property="og:image" content="https://TU-DOMINIO/img/portada.jpg"> -->
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="css/styles.css">
-
-<!-- Three.js por import map (solo se usa si el hero está activo) -->
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
-</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0807">
+  <title>Juan &amp; Ruth · Nuestra boda</title>
+  <meta name="description" content="Estás invitado a la boda de Juan y Ruth. 31 de diciembre de 2026.">
+  <link rel="preload" href="fonts/greatvibes-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <canvas id="stage" aria-hidden="true"></canvas>
 
-<a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="loader" class="loader" role="status">Preparando el libro…</div>
 
-<noscript><p style="padding:2rem;text-align:center;font-family:sans-serif">Activa JavaScript para ver la invitación.</p></noscript>
+  <div id="gate" class="gate" hidden>
+    <button id="openBtn" class="open-btn">Abrir invitación</button>
+  </div>
 
-<!-- HERO OPCIONAL: se inyecta desde config.js -->
-<div id="hero" hidden></div>
+  <nav id="hud" class="hud" aria-label="Páginas" hidden>
+    <button id="prevBtn" class="nav-btn" aria-label="Página anterior">‹</button>
+    <div class="hud__mid"><span id="counter" class="counter">1 / 8</span><div id="dots" class="dots" aria-hidden="true"></div></div>
+    <button id="nextBtn" class="nav-btn" aria-label="Página siguiente">›</button>
+  </nav>
+  <p id="hint" class="hint" hidden>Desliza para pasar la página</p>
+  <button id="muteBtn" class="mute" aria-label="Silenciar música" aria-pressed="false" hidden>♪</button>
 
-<header id="site-nav" hidden></header>
+  <div id="live" class="sr" aria-live="polite"></div>
+  <noscript><p class="sr">Esta invitación necesita JavaScript.</p></noscript>
 
-<main id="main"></main>
-
-<footer id="site-footer" hidden></footer>
-
-<script src="js/config.js" defer></script>
-<script src="js/app.js" defer></script>
-<script src="js/popup-book.js" defer></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

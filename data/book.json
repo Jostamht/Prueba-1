@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "title": "Juan & Ruth · Nuestra boda",
+    "novios": ["Juan", "Ruth"],
+    "fecha": "2026-12-31T12:00:00",
+    "fechaTexto": "31 de diciembre de 2026",
+    "expiradoTexto": "¡Hoy es el gran día!"
+  },
+  "musica": "audio/fairytale.mp3",
+  "whatsapp": { "telefono": "", "mensaje": "Hola, soy {nombre} y confirmo mi asistencia a la boda de Juan y Ruth." },
+  "enlaces": {
+    "ceremonia": "https://maps.app.goo.gl/yiyH9b1Dt37CWAYD7",
+    "recepcion": "https://maps.app.goo.gl/Fa7yzxEHKEbNbGEx6"
+  },
+  "rsvp": {
+    "fechaLimite": "15 de diciembre",
+    "invitados": [
+      { "nombre": "Familia Pérez Gómez", "pases": 4, "telefono4": "1234" },
+      { "nombre": "María Torres", "pases": 2, "telefono4": "5678" },
+      { "nombre": "Carlos Ramírez", "pases": 1, "telefono4": "4321" }
+    ]
+  },
+  "spreads": [
+    {
+      "id": "bienvenida",
+      "titulo": "Bienvenida",
+      "art": "img/1A.webp",
+      "items": [
+        { "src": "img/1B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/1C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "Nos casamos" },
+        { "type": "title", "text": "Juan & Ruth", "size": 128 },
+        { "type": "text", "text": "31 de diciembre de 2026 · 12:00 pm", "size": 40 },
+        { "type": "ornament" },
+        { "type": "countdown" },
+        { "type": "text", "text": "Con la bendición de Dios y de nuestras familias, te invitamos a celebrar con nosotros.", "italic": true, "size": 36 }
+      ] }
+    },
+    {
+      "id": "historia",
+      "titulo": "Nuestra historia",
+      "art": "img/2A.webp",
+      "items": [
+        { "src": "img/2B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/2C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "Nuestra historia" },
+        { "type": "title", "text": "Cómo empezó todo", "size": 104 },
+        { "type": "ornament" },
+        { "type": "text", "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "size": 38 },
+        { "type": "text", "text": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo.", "italic": true, "size": 36 }
+      ] }
+    },
+    {
+      "id": "ceremonia",
+      "titulo": "Ceremonia",
+      "art": "img/3A.webp",
+      "items": [
+        { "src": "img/3B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/3C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "La ceremonia" },
+        { "type": "title", "text": "Nos dan el sí", "size": 110 },
+        { "type": "ornament" },
+        { "type": "kv", "label": "Cuándo", "value": "31 de diciembre · 12:00 pm" },
+        { "type": "text", "text": "Nombre del lugar · Calle Ejemplo 123, Ciudad", "size": 36 },
+        { "type": "button", "label": "Cómo llegar", "action": { "url": "ceremonia" } }
+      ] }
+    },
+    {
+      "id": "recepcion",
+      "titulo": "Recepción",
+      "art": "img/4A.webp",
+      "items": [
+        { "src": "img/4B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/4C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "La recepción" },
+        { "type": "title", "text": "Brindemos juntos", "size": 104 },
+        { "type": "ornament" },
+        { "type": "kv", "label": "Cuándo", "value": "31 de diciembre · 4:00 pm" },
+        { "type": "text", "text": "Nombre del salón · Avenida Ejemplo 456, Ciudad", "size": 36 },
+        { "type": "button", "label": "Cómo llegar", "action": { "url": "recepcion" } }
+      ] }
+    },
+    {
+      "id": "programa",
+      "titulo": "Programa",
+      "art": "img/5A.webp",
+      "items": [
+        { "src": "img/5B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/5C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "Programa de la recepción" },
+        { "type": "title", "text": "El gran día", "size": 100 },
+        { "type": "ornament" },
+        { "type": "list", "rows": [
+          ["5:00 pm", "Entrada"],
+          ["6:00 pm", "Vals"],
+          ["7:30 pm", "Cena"],
+          ["9:30 pm", "Corte de torta"],
+          ["11:00 pm", "Despedida"]
+        ] }
+      ] }
+    },
+    {
+      "id": "detalles",
+      "titulo": "Detalles",
+      "art": "img/6A.webp",
+      "items": [
+        { "src": "img/6B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/6C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "Detalles" },
+        { "type": "title", "text": "Para que todo salga bien", "size": 84 },
+        { "type": "ornament" },
+        { "type": "kv", "label": "Código de vestimenta", "value": "Formal" },
+        { "type": "kv", "label": "Hospedaje", "value": "No es necesario" },
+        { "type": "text", "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "italic": true, "size": 34 }
+      ] }
+    },
+    {
+      "id": "regalos",
+      "titulo": "Regalos",
+      "art": "img/7A.webp",
+      "items": [
+        { "src": "img/7B.webp", "anchor": [-0.95, 0.3], "maxWidth": 1.15, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/7C.webp", "anchor": [0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "Regalos" },
+        { "type": "title", "text": "Tu presencia es lo mejor", "size": 88 },
+        { "type": "text", "text": "Cualquier detalle será recibido con cariño. Si prefieres un depósito:", "size": 36 },
+        { "type": "image", "src": "img/qr.png", "size": 250 }
+      ] }
+    },
+    {
+      "id": "rsvp",
+      "titulo": "Confirma tu asistencia",
+      "art": "img/8A.webp",
+      "items": [
+        { "src": "img/8B.webp", "anchor": [0.95, 0.3], "maxWidth": 1.1, "maxHeight": 2.1, "layer": "mid" },
+        { "src": "img/8C.webp", "anchor": [-0.95, 0.75], "maxWidth": 1.0, "maxHeight": 1.0, "layer": "fore" }
+      ],
+      "card": { "blocks": [
+        { "type": "eyebrow", "text": "Confirma tu asistencia" },
+        { "type": "title", "text": "Te esperamos", "size": 108 },
+        { "type": "text", "text": "Por favor confirma antes del 15 de diciembre.", "size": 36 },
+        { "type": "button", "label": "Confirmar asistencia", "action": { "rsvp": true } },
+        { "type": "button", "label": "Confirmar por WhatsApp", "style": "secondary", "action": { "whatsapp": true } }
+      ] }
+    }
+  ]
+}
