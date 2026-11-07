@@ -534,7 +534,7 @@ export class Book {
       this._curl(leaf, dir > 0 ? 0 : 1); leaf.group.visible = true; leaves.push(leaf);
     }
     if (dir > 0) this._setMap(this.rightSurface, to.tex); else this._setMap(this.leftSurface, to.tex);
-    const D = k === 1 ? 1245 : 1000, ST = 170, T0 = 45, lastStart = T0 + (k - 1) * ST, T = lastStart + D * 1.17;
+    const D = k === 1 ? 1620 : 1200, ST = 190, T0 = 45, lastStart = T0 + (k - 1) * ST, T = lastStart + D * 1.17;
     await this.anim(T, (t) => {
       const ms = t * T;
       this._fold(from, 1 - easeInOut(clamp(ms / 330)));                       // la escena que sale se pliega rápido
@@ -576,7 +576,7 @@ export class Book {
     const d = this.drag; if (!d) return;
     const p0 = d.param;
     if (commit) {
-      await this.anim(Math.max(220, (1 - p0) * 1300), (t) => this._dragApply(lerp(p0, 1, 1 - (1 - t) * (1 - t))));
+      await this.anim(Math.max(260, (1 - p0) * 1700), (t) => this._dragApply(lerp(p0, 1, 1 - (1 - t) * (1 - t))));
       this._all(d.to).forEach((r) => r.set(1, true));
       if (d.dir > 0) this._setMap(this.leftSurface, d.to.tex); else this._setMap(this.rightSurface, d.to.tex);
       d.leaf.group.visible = false; this.cur = d.n; this.drag = null; this._live(d.n); this.busy = false;
