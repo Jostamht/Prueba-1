@@ -27,7 +27,7 @@ Para la vista 2 son `2A`, `2B`, `2C`, y así hasta la 8. Para reemplazarlas bast
 Las imágenes actuales son provisionales y se generan con `tools/make-placeholders.py`.
 
 ## Controles
-Deslizar a los lados, flechas o teclado para pasar la página; arrastrar hacia arriba o abajo para inclinar la vista. En la primera vista, "Portada" (o deslizar hacia atrás) cierra el libro; los puntos de abajo permiten saltar a cualquier página (las hojas giran en cadena); en la última, "Portada" regresa hasta la portada y cierra el libro. Las figuras C hacen un vaivén suave (unos 2°, de atrás hacia adelante) en reposo (se desactiva con la preferencia de reducir movimiento). En pantallas verticales, el botón "Leer" acerca la tarjeta con el texto.
+Deslizar a los lados, flechas o teclado para pasar la página; arrastrar hacia arriba o abajo para inclinar la vista. En la primera vista, "Portada" (o deslizar hacia atrás) cierra el libro; los puntos de abajo permiten saltar a cualquier página (las hojas giran en cadena); en la última, "Portada" regresa hasta la portada y cierra el libro. Las figuras C hacen un vaivén suave (unos 2°, de atrás hacia adelante) en reposo (se desactiva con la preferencia de reducir movimiento). La hoja sigue al dedo al arrastrar: si se suelta antes de la mitad vuelve a su sitio y si se pasa de la mitad (o se lanza rápido) termina de girar. En teléfonos, tras levantarse cada escena la cámara se acerca sola a la tarjeta para leer, y vuelve a la vista general al pasar la hoja; el botón "Leer" / "Ver libro" permite forzar una u otra.
 
 ## Música
 `audio/fairytale.mp3`. Empieza al tocar "Abrir invitación" y se puede silenciar con el botón de arriba a la derecha.

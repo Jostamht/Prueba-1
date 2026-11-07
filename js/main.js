@@ -48,12 +48,14 @@ async function main() {
   mute.addEventListener('click', () => { muted = !muted; mute.setAttribute('aria-pressed', String(muted)); mute.setAttribute('aria-label', muted ? 'Activar música' : 'Silenciar música'); syncAudio(); });
   document.addEventListener('visibilitychange', syncAudio);
 
-  let portrait = false, isOpen = false;
+  let phone = false, isOpen = false;
   const readBtn = $('readBtn');
-  const syncRead = () => { readBtn.hidden = !(portrait && isOpen); };
-  readBtn.addEventListener('click', () => { const on = readBtn.getAttribute('aria-pressed') !== 'true'; readBtn.setAttribute('aria-pressed', String(on)); readBtn.textContent = on ? 'Ver libro' : 'Leer'; book.setRead(on); });
+  const syncRead = () => { readBtn.hidden = !(phone && isOpen); };
+  // "Leer" / "Ver libro": además de la toma automática, el lector puede forzar una u otra
+  readBtn.addEventListener('click', () => { const on = !book.read; book.autoRead = on; book.setRead(on); });
   const book = new Book($('stage'), data, {
-    onAspect: (a) => { portrait = a < 1; syncRead(); if (!portrait && readBtn.getAttribute('aria-pressed') === 'true') readBtn.click(); },
+    onAspect: (a, ph) => { phone = ph; syncRead(); },
+    onRead: (on) => { readBtn.setAttribute('aria-pressed', String(on)); readBtn.textContent = on ? 'Ver libro' : 'Leer'; },
     onAction: handleAction,
     onOpenRequest: () => open(),
     onCloseRequest: () => closeBook(),
