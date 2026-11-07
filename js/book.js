@@ -175,7 +175,8 @@ class Rig {
     this.group.visible = vis; this.shadow.visible = vis;
     if (!vis) { this.supports.forEach((s) => s.pair.forEach((m) => (m.visible = false))); return; }
     const e = rising ? backOut(q) : smooth(q);
-    this.rig.rotation.x = lerp(-Math.PI / 2, this.finalX, e);
+    this.baseX = lerp(-Math.PI / 2, this.finalX, e);
+    this.rig.rotation.x = this.baseX;
     const o = clamp(q * 3);
     for (const m of [this.fm, this.bm]) { m.opacity = o; m.transparent = o < 0.999; }
     this.sm.opacity = clamp(q * 1.4) * 0.9;
@@ -383,7 +384,7 @@ export class Book {
       const w = bw * sc, h = bh * sc, x = it.anchor[0], z = it.anchor[1];
       const rig = new Rig(this, { map, backMap: back, w, h, x, z, finalX: -0.06, cut: true, support: { maxBack: Math.max(0.08, z + PAGE_H / 2 - 0.03) }, shadowW: w * 1.25, shadowD: Math.max(0.1, Math.min(0.4, w * 0.45)) });
       rig.layer = it.layer || 'mid';
-      rig.idle = rig.layer === 'foreground' ? { amp: 0.07, period: 3.4, phase: s.i * 0.9 + k } : null;   // balanceo suave de las figuras C
+      rig.idle = rig.layer === 'foreground' ? { amp: 0.035, period: 3.4, phase: s.i * 0.9 + k } : null;   // vaivén suave (~2°) de las figuras C, de atrás hacia adelante
       rig.late = Math.abs(x) < PAGE_W * 0.2 && w > 0.9 || x < 0;   // lo que cae bajo la hoja que gira, sube al final
       s.items.push(rig);
     });
@@ -417,7 +418,7 @@ export class Book {
     for (const sp of this.spreads) for (const r of sp.items) {
       if (!r.idle || !r.group.visible) continue;
       const f = smooth(clamp((r.q - 0.9) / 0.1));
-      r.rig.rotation.z = f * r.idle.amp * Math.sin((2 * Math.PI * t) / r.idle.period + r.idle.phase);
+      r.rig.rotation.x = r.baseX + f * r.idle.amp * Math.sin((2 * Math.PI * t) / r.idle.period + r.idle.phase);   // adelante y atrás
     }
   }
   _tick = (now) => {
