@@ -398,12 +398,14 @@ export class Book {
     const from = this.mixRead, to = on ? 1 : 0, tok = ++this._readTok;
     this.anim(on ? 850 : 650, (t) => { if (tok === this._readTok) this.mixRead = lerp(from, to, smooth(t)); });
   }
+  /** Acerca la cámara a la tarjeta ya, sin esperar a que termine la animación (se llama cuando la hoja está por caer). */
+  _autoReadNow() { if (this.autoRead && this.phone && !this.read && (this.stage === 'open' || this.stage === 'opening')) this.setRead(true); }
   _cancelAuto() { clearTimeout(this._autoT); this._autoT = 0; }
   /** Cuando la escena termina de levantarse, tras un instante la cámara se acerca sola a la tarjeta. */
   _afterSettle() {
     this._cancelAuto();
     if (!this.autoRead || !this.phone || this.stage !== 'open') return;
-    this._autoT = setTimeout(() => { this._autoT = 0; if (this.stage === 'open' && !this.busy && !this.read) this.setRead(true); }, 1100);
+    this._autoT = setTimeout(() => { this._autoT = 0; if (this.stage === 'open' && !this.busy && !this.read) this.setRead(true); }, 250);
   }
 
   // ---------------- páginas ----------------
@@ -475,7 +477,9 @@ export class Book {
     const s = await this.ensure(0);
     this._setMap(this.coverIn, s.tex); this.coverIn.material.map = s.tex;
     this.rightSurface.visible = true; this.gutter.visible = true;
+    let early = false;
     await this.anim(OPEN_MS, (t) => {
+      if (!early && t > 0.9) { early = true; this._autoReadNow(); }
       const e = easeInOut(clamp(t / 0.5));
       this.cover.rotation.z = Math.PI * e;
       this.leftStack.visible = e > 0.5;
@@ -535,7 +539,9 @@ export class Book {
     }
     if (dir > 0) this._setMap(this.rightSurface, to.tex); else this._setMap(this.leftSurface, to.tex);
     const D = k === 1 ? 1620 : 1200, ST = 190, T0 = 45, lastStart = T0 + (k - 1) * ST, T = lastStart + D * 1.17;
+    let early = false;
     await this.anim(T, (t) => {
+      if (!early && t > 0.78) { early = true; this._autoReadNow(); }   // el zoom empieza mientras las figuras terminan de subir
       const ms = t * T;
       this._fold(from, 1 - easeInOut(clamp(ms / 330)));                       // la escena que sale se pliega rápido
       leaves.forEach((leaf, j) => {
@@ -576,7 +582,8 @@ export class Book {
     const d = this.drag; if (!d) return;
     const p0 = d.param;
     if (commit) {
-      await this.anim(Math.max(260, (1 - p0) * 1700), (t) => this._dragApply(lerp(p0, 1, 1 - (1 - t) * (1 - t))));
+      let early = false;
+      await this.anim(Math.max(260, (1 - p0) * 1700), (t) => { if (!early && t > 0.55) { early = true; this._autoReadNow(); } this._dragApply(lerp(p0, 1, 1 - (1 - t) * (1 - t))); });
       this._all(d.to).forEach((r) => r.set(1, true));
       if (d.dir > 0) this._setMap(this.leftSurface, d.to.tex); else this._setMap(this.rightSurface, d.to.tex);
       d.leaf.group.visible = false; this.cur = d.n; this.drag = null; this._live(d.n); this.busy = false;
